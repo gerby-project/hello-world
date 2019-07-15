@@ -1,0 +1,70 @@
+language: python
+
+python:
+  - "3.6"
+
+install:
+  - sudo apt-get update
+  - sudo apt install dvipng
+  # install plasTeX
+  - git clone https://github.com/gerby-project/plastex.git
+  - cd plastex
+  - git checkout gerby
+  - pip install .
+  - cd ..
+
+  # install Gerby
+  - git clone https://github.com/gerby-project/gerby-website.git
+  - cd gerby-website/gerby/static
+  - git clone https://github.com/sonoisa/XyJax.git
+  - sed -i -e 's@\[MathJax\]@/static/XyJax@' XyJax/extensions/TeX/xypic.js
+
+  - git clone https://github.com/aexmachina/jquery-bonsai
+  - cp jquery-bonsai/jquery.bonsai.css css/
+
+  - cd ../..
+  - pip install -e .
+  - cd ..
+
+  # setup configuration
+  - mv configuration.py gerby-website/gerby/configuration.py
+
+  # setup soft links for plasTeX output
+  - cd gerby-website/gerby/tools
+  - ln -s ../../../document      document
+  - ln -s ../../../document.paux document.paux
+  - ln -s ../../../tags          tags
+  - cd ../../..
+
+  # setup soft links for database
+  - cd gerby-website
+  - ln -s gerby/tools/hello-world.sqlite hello-world.sqlite
+  - ln -s gerby/tools/comments.sqlite    comments.sqlite
+  - cd ..
+
+
+
+
+script:
+  # update tags file with new tags
+  # in real life: first run it without writing it to the tags file to check for errors
+  - python3 tagger.py >> tags
+
+  # convert to HTML: output goes to document/ folder
+  - plastex --renderer=Gerby ./document.tex
+
+  # import database
+  - cd gerby-website/gerby/tools
+  - python3 update.py
+  - cd ../..
+
+  # run Flask
+  - export FLASK_APP=gerby
+  - python3 -m flask run &
+  - sleep 1
+
+  - wget http://127.0.0.1:5000/tag/0001
+  - cat 0001
+
+
+
