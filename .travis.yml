@@ -4,64 +4,66 @@ python:
   - "3.6"
 
 install:
+  # 0) make sure dvipng can be found
   - sudo apt-get update
   - sudo apt install dvipng
-  # install plasTeX
+
+  # 1) install plasTeX
   - git clone https://github.com/gerby-project/plastex.git
   - cd plastex
+  # use the Gerby branch of plasTeX
   - git checkout gerby
+  # actual install
   - pip install .
   - cd ..
 
-  # install Gerby
+
+  # 2) install Gerby
   - git clone https://github.com/gerby-project/gerby-website.git
   - cd gerby-website/gerby/static
-  - git clone https://github.com/sonoisa/XyJax.git
-  - sed -i -e 's@\[MathJax\]@/static/XyJax@' XyJax/extensions/TeX/xypic.js
-
+  # import jQuery Bonsai
   - git clone https://github.com/aexmachina/jquery-bonsai
   - cp jquery-bonsai/jquery.bonsai.css css/
-
+  # actual install
   - cd ../..
-  - pip install -e .
+  - pip install -e . # we use -e because we want to change the source files
   - cd ..
 
-  # setup configuration
+  # 3) setup configuration
   - mv configuration.py gerby-website/gerby/configuration.py
 
-  # setup soft links for plasTeX output
+  # 4) setup soft links for plasTeX output
   - cd gerby-website/gerby/tools
   - ln -s ../../../document      document
   - ln -s ../../../document.paux document.paux
   - ln -s ../../../tags          tags
   - cd ../../..
 
-  # setup soft links for database
+  # 5) setup soft links for database
   - cd gerby-website
   - ln -s gerby/tools/hello-world.sqlite hello-world.sqlite
   - ln -s gerby/tools/comments.sqlite    comments.sqlite
   - cd ..
 
 
-
-
 script:
-  # update tags file with new tags
-  # in real life: first run it without writing it to the tags file to check for errors
+  # 1) update tags file with new tags
   - python3 tagger.py >> tags
+  # in real life: first run it without writing it to the tags file to check for errors
 
-  # convert to HTML: output goes to document/ folder
+  # 2) convert to HTML: output goes to document/
   - plastex --renderer=Gerby ./document.tex
 
-  # import database
+  # 3) import plasTeX output into database
   - cd gerby-website/gerby/tools
   - python3 update.py
   - cd ../..
 
-  # run Flask
+  # 4) run Flask
   - export FLASK_APP=gerby
   - python3 -m flask run &
-  - sleep 1
 
+  # testing the setup
+  - sleep 1
   - wget http://127.0.0.1:5000/tag/0001
   - cat 0001
