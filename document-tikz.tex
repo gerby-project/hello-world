@@ -1,0 +1,57 @@
+\documentclass{report}
+\usepackage{amssymb, amsmath, hyperref}
+\usepackage{tikz}
+\usepackage{tikz-cd}
+
+\theoremstyle{plain}
+\newtheorem{theorem}[subsection]{Theorem}
+\newtheorem{proposition}[subsection]{Proposition}
+\newtheorem{lemma}[subsection]{Lemma}
+
+\theoremstyle{definition}
+\newtheorem{definition}[subsection]{Definition}
+\newtheorem{example}[subsection]{Example}
+\newtheorem{exercise}[subsection]{Exercise}
+\newtheorem{situation}[subsection]{Situation}
+
+\theoremstyle{remark}
+\newtheorem{remark}[subsection]{Remark}
+\newtheorem{remarks}[subsection]{Remarks}
+
+\numberwithin{equation}{subsection}
+
+\begin{document}
+
+\chapter{A first chapter}
+\label{chapter:first}
+
+\section{A first section}
+\label{section:first}
+
+\begin{lemma}
+  \label{lemma:pythagoras}
+  $a^2=b^2+c^2$
+\end{lemma}
+
+\begin{tikzpicture}
+  \draw (0,0) --(1,2);
+\end{tikzpicture}
+
+\begin{tikzcd}
+  a \arrow[r] & b
+\end{tikzcd}
+
+\section{A second section}
+\label{section:second}
+
+
+\chapter{A second chapter}
+\label{chapter:second}
+
+\section{A third section}
+\label{section:third}
+
+\section{A fourth section}
+\label{section:fourth}
+
+\end{document}
