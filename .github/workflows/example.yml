@@ -1,0 +1,40 @@
+name: Gerby
+on:
+  workflow_dispatch:
+  push:
+jobs:
+  plastex:
+    runs-on: ubuntu-latest
+    steps:
+      # for now, because callable has changed
+      - name: Use older Python version
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.8"
+      - name: Install TeXLive
+        uses: teatimeguest/setup-texlive-action@v2
+        with:
+          packages: scheme-basic
+      - name: Install dvipng and Jinja2
+        run: |
+          sudo apt-get update
+          sudo apt install dvipng
+          pip3 install Jinja2
+      - name: Checkout Hello world
+        uses: actions/checkout@v4
+      - name: Checkout plasTeX
+        uses: actions/checkout@v4
+        with:
+          repository: gerby-project/plastex
+          ref: gerby
+          path: plastex
+      - name: Install plasTeX
+        run: |
+          cd plastex
+          pip3 install .
+          cd ..
+      - name: Run tagger and plasTeX
+        run: |
+          python3 tagger.py >> tags
+          plastex --renderer=Gerby document.tex
+          ls
