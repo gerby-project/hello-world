@@ -10,7 +10,7 @@ jobs:
       - name: Use older Python version
         uses: actions/setup-python@v4
         with:
-          python-version: "3.6"
+          python-version: "3.6.15"
       - name: Install TeXLive
         uses: teatimeguest/setup-texlive-action@v2
         with:
