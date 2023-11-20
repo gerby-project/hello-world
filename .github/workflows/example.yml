@@ -10,7 +10,7 @@ jobs:
       - name: Use older Python version
         uses: actions/setup-python@v4
         with:
-          python-version: "3.6.15"
+          python-version: "3.9"
       - name: Install TeXLive
         uses: teatimeguest/setup-texlive-action@v2
         with:
@@ -19,7 +19,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt install dvipng
-          pip3 install Jinja2
+          pip3 install MarkupSafe==1.1.1
+          pip3 install Jinja2==2.11.2
       - name: Checkout Hello world
         uses: actions/checkout@v4
       - name: Checkout plasTeX
