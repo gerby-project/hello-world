@@ -38,4 +38,4 @@ jobs:
         run: |
           python3 tagger.py >> tags
           plastex --renderer=Gerby document.tex
-          ls
+          ls document
